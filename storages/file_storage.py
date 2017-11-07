@@ -1,4 +1,6 @@
 import os
+import re
+import ast
 
 from storages.storage import Storage
 
@@ -12,9 +14,13 @@ class FileStorage(Storage):
         if not os.path.exists(self.file_name):
             raise StopIteration
 
+        data = []
+
         with open(self.file_name) as f:
             for line in f:
-                yield line.strip()
+                data.append(ast.literal_eval(re.search(r'\{.*\}', line.strip()).group(0)))
+
+        return data
 
     def write_data(self, data_array):
         """
@@ -22,11 +28,8 @@ class FileStorage(Storage):
         should be written as lines
         """
         with open(self.file_name, 'w') as f:
-            for line in data_array:
-                if line.endswith('\n'):
-                    f.write(line)
-                else:
-                    f.write(line + '\n')
+            data_array = data_array.replace('},', '},\n')
+            f.write(data_array)
 
     def append_data(self, data):
         """

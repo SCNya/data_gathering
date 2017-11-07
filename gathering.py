@@ -127,13 +127,13 @@ import sys
 
 from scrappers.scrapper import Scrapper
 from storages.file_storage import FileStorage
+from transform.transformer import Transformer
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
 SCRAPPED_FILE = 'scrapped_data.txt'
-TABLE_FORMAT_FILE = 'data.csv'
 
 
 def gather_process():
@@ -148,10 +148,9 @@ def gather_process():
 def convert_data_to_table_format():
     logger.info("transform")
 
-    # Your code here
-    # transform gathered data from txt file to pandas DataFrame and save as csv
-    pass
-
+    transformer = Transformer()
+    data = FileStorage(SCRAPPED_FILE).read_data()
+    transformer.transform(data)
 
 def stats_of_data():
     logger.info("stats")
